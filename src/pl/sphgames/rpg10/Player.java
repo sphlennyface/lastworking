@@ -38,7 +38,7 @@ public class Player {
 	/** The time since the last frame change took place */
 	private long lastFrameChange;
 	/** The frame duration in milliseconds, i.e. how long any given frame of animation lasts */
-	private long frameDuration = 50;
+	private long frameDuration = 10;
 	private Random generator;
 
 	public enum Face {
@@ -105,6 +105,39 @@ public class Player {
 		if(isMoving == true)
 			System.out.println(("true"));
 		switch (face) {
+
+		case SOUTH:
+			if(isMoving == true && ( displayedImage == playerImgS1 || displayedImage == playerImgS2 )){
+				if(faceChange == true){
+					int helper = generator.nextInt(2);
+					if(helper == 1)
+						displayedImage = playerImgS1;
+					else
+						displayedImage = playerImgS2;
+					faceChange = false;
+				}
+				if(frameDuration < lastFrameChange){
+					changeFrame = 1;
+					if(changeFrame == 1 && displayedImage == playerImgS1){
+						displayedImage = playerImgS2;
+						changeFrame = 0;
+
+					}
+					if(changeFrame == 1 && displayedImage == playerImgS2){
+						displayedImage = playerImgS1;
+						changeFrame = 0;
+					}
+					lastFrameChange = 0;
+				}
+				lastFrameChange++;
+			}
+			else{
+				displayedImage = playerImgS1;
+
+			}
+			break;
+
+
 		case NORTH:
 
 			if(isMoving == true && ( displayedImage == playerImgN1 || displayedImage == playerImgN2 )){
@@ -136,7 +169,6 @@ public class Player {
 
 			}
 			break;
-
 
 		case EAST:
 			if(isMoving == true && ( displayedImage == playerImgE1 || displayedImage == playerImgE2 )){
@@ -200,36 +232,6 @@ public class Player {
 			}
 			break;
 
-		case SOUTH:
-			if(isMoving == true && ( displayedImage == playerImgS1 || displayedImage == playerImgS2 )){
-				if(faceChange == true){
-					int helper = generator.nextInt(2);
-					if(helper == 1)
-						displayedImage = playerImgS1;
-					else
-						displayedImage = playerImgS2;
-					faceChange = false;
-				}
-				if(frameDuration < lastFrameChange){
-					changeFrame = 1;
-					if(changeFrame == 1 && displayedImage == playerImgS1){
-						displayedImage = playerImgS2;
-						changeFrame = 0;
-
-					}
-					if(changeFrame == 1 && displayedImage == playerImgS2){
-						displayedImage = playerImgS1;
-						changeFrame = 0;
-					}
-					lastFrameChange = 0;
-				}
-				lastFrameChange++;
-			}
-			else{
-				displayedImage = playerImgS1;
-
-			}
-			break;
 
 		}
 		g2d.drawImage(displayedImage, x, y, null);
@@ -375,19 +377,9 @@ public class Player {
 			face = Face.EAST;
 		}
 		else {{ 
-			if(Canvas.keyboardKeyState(KeyEvent.VK_D)) {
-//				if (displayedImage != playerImgE1 || displayedImage != playerImgE2)
-//					displayedImage = playerImgE1;
-				face = Face.EAST;
-				for(int i = 0; i < playerSpeed; i++)
-					if (isWalkable(x + 1, y))
-						x += 1;
-				isMoving = true;
-			}
+
 
 			if(Canvas.keyboardKeyState(KeyEvent.VK_W)) {
-//				if (displayedImage != playerImgN1 || displayedImage != playerImgN2)
-//					displayedImage = playerImgN1;
 				face = Face.NORTH;
 				for(int i = 0; i < playerSpeed; i++)
 					if (isWalkable(x, y - 1))
@@ -396,19 +388,22 @@ public class Player {
 			}
 
 			if(Canvas.keyboardKeyState(KeyEvent.VK_S)) {
-//				if (displayedImage != playerImgS1 || displayedImage != playerImgS2)
-//					displayedImage = playerImgS1;
 				face = Face.SOUTH;
 				for(int i = 0; i < playerSpeed; i++)
 					if (isWalkable(x, y + 1))
 						y += 1;
 				isMoving = true;
 			}
-
+			
+			if(Canvas.keyboardKeyState(KeyEvent.VK_D)) {
+				face = Face.EAST;
+				for(int i = 0; i < playerSpeed; i++)
+					if (isWalkable(x + 1, y))
+						x += 1;
+				isMoving = true;
+			}
 
 			if(Canvas.keyboardKeyState(KeyEvent.VK_A)) {
-//				if (displayedImage != playerImgW1 || displayedImage != playerImgW2)
-//					displayedImage = playerImgW1;
 				face = Face.WEST;
 				for(int i = 0; i < playerSpeed; i++)
 					if (isWalkable(x - 1, y))
@@ -417,7 +412,6 @@ public class Player {
 			}}
 		if(!Canvas.keyboardKeyState(KeyEvent.VK_A) && !Canvas.keyboardKeyState(KeyEvent.VK_S) && !Canvas.keyboardKeyState(KeyEvent.VK_D) && !Canvas.keyboardKeyState(KeyEvent.VK_W)){
 			isMoving = false;
-//			if(lastFace != face)
 				faceChange = true;
 			lastFace = face;
 		}
